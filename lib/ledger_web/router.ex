@@ -7,5 +7,6 @@ defmodule LedgerWeb.Router do
 
   scope "/api", LedgerWeb do
     pipe_through :api
+    resources "/groups", GroupController, except: [:new, :edit]
   end
 end
