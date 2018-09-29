@@ -10,6 +10,7 @@ defmodule LedgerWeb.Router do
     resources "/groups", GroupController, except: [:new, :edit] do
       resources "/participants", ParticipantController, except: [:new, :edit]
       post "/transfer", ParticipantController, :transfer
+      get "/total", GroupController, :total
     end
   end
 end

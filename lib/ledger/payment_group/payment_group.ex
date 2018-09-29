@@ -210,4 +210,15 @@ defmodule Ledger.PaymentGroup do
 
     {:ok, updated_from_participant, updated_to_participant}
   end
+
+  @doc """
+  Returns the total value of all participants within a group.
+  """
+  def group_total(group_id) do
+    query = from p in Participant,
+      where: p.group_id == ^group_id,
+      select: sum(p.amount)
+    total = Repo.all(query) |> List.first()
+    {:ok, total}
+  end
 end

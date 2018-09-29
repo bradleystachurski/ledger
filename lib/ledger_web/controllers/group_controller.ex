@@ -39,4 +39,11 @@ defmodule LedgerWeb.GroupController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def total(conn, group_params) do
+    group_id = group_params["group_id"] |> String.to_integer()
+    with {:ok, group_total} <- PaymentGroup.group_total(group_id) do
+      render(conn, "show_total.json", group_total: group_total)
+    end
+  end
 end
