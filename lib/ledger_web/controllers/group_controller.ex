@@ -11,7 +11,7 @@ defmodule LedgerWeb.GroupController do
     render(conn, "index.json", groups: groups)
   end
 
-  def create(conn, %{"group" => group_params}) do
+  def create(conn, group_params) do
     with {:ok, %Group{} = group} <- PaymentGroup.create_group(group_params) do
       conn
       |> put_status(:created)

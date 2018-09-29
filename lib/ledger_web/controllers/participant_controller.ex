@@ -7,21 +7,14 @@ defmodule LedgerWeb.ParticipantController do
   action_fallback LedgerWeb.FallbackController
 
   def index(conn, params) do
-    group_id = params["group_id"] |> String.to_integer()
-    participants = PaymentGroup.list_participants(group_id)
+    participants = params["group_id"] |> String.to_integer() |> PaymentGroup.list_participants()
     render(conn, "index.json", participants: participants)
   end
 
   def create(conn, params) do
     check_non_neg_amount(conn, params)
 
-    updated_params = %{
-      "group_id" => params["group_id"],
-      "name" => params["participant"]["name"],
-      "amount" => params["participant"]["amount"]
-    }
-
-    with {:ok, %Participant{} = participant} <- PaymentGroup.create_participant(updated_params) do
+    with {:ok, %Participant{} = participant} <- PaymentGroup.create_participant(params) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", group_participant_path(conn, :show, params["group_id"], participant))
@@ -30,7 +23,7 @@ defmodule LedgerWeb.ParticipantController do
   end
 
   defp check_non_neg_amount(conn, params) do
-    if params["participant"]["amount"] < 0 do
+    if params["amount"] < 0 do
       render(conn, "non_neg.json", params: params)
       raise "Amount must be non negative"
     end

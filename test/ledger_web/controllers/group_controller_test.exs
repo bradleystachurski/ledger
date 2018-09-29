@@ -26,7 +26,7 @@ defmodule LedgerWeb.GroupControllerTest do
 
   describe "create group" do
     test "renders group when data is valid", %{conn: conn} do
-      conn = post conn, group_path(conn, :create), group: @create_attrs
+      conn = post conn, group_path(conn, :create), @create_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, group_path(conn, :show, id)
