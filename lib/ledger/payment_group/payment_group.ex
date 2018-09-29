@@ -195,4 +195,19 @@ defmodule Ledger.PaymentGroup do
   def change_participant(%Participant{} = participant) do
     Participant.changeset(participant, %{})
   end
+
+  @doc """
+  Transfers `amount` from one participant to another.
+  """
+  def transfer(%Participant{} = from_participant, %Participant{} = to_participant, params) do
+    {:ok, updated_from_participant} =
+      from_participant
+      |> update_participant(%{amount: from_participant.amount - params["amount"]})
+
+    {:ok, updated_to_participant} =
+      to_participant
+      |> update_participant(%{amount: to_participant.amount + params["amount"]})
+
+    {:ok, updated_from_participant, updated_to_participant}
+  end
 end

@@ -28,6 +28,13 @@ defmodule LedgerWeb.ParticipantController do
     end
   end
 
+  defp check_non_neg_amount(conn, params) do
+    if params["participant"]["amount"] < 0 do
+      render(conn, "non_neg.json", params: params)
+      raise "Amount must be non negative"
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     participant = PaymentGroup.get_participant!(id)
     render(conn, "show.json", participant: participant)
@@ -48,10 +55,33 @@ defmodule LedgerWeb.ParticipantController do
     end
   end
 
-  defp check_non_neg_amount(conn, params) do
-    if params["participant"]["amount"] < 0 do
-      render(conn, "non_neg.json", params: params)
-      raise "Amount must be non negative"
+  def transfer(conn, params) do
+    from_participant = PaymentGroup.get_participant!(params["from"])
+    to_participant = PaymentGroup.get_participant!(params["to"])
+
+    check_invalid_transfer_amount(conn, from_participant, params)
+    check_invalid_transfer_group(conn, from_participant, to_participant, params)
+
+    with {:ok, %Participant{} = from_participant, %Participant{} = to_participant} <-
+           PaymentGroup.transfer(from_participant, to_participant, params) do
+      render(conn, "show_transfer.json",
+        from_participant: from_participant,
+        to_participant: to_participant
+      )
+    end
+  end
+
+  defp check_invalid_transfer_amount(conn, %Participant{} = participant, params) do
+    if params["amount"] > participant.amount do
+      render(conn, "invalid_transfer_amount.json", params: params)
+      raise "Cannot transfer an amount greater than current balance"
+    end
+  end
+
+  defp check_invalid_transfer_group(conn, from_participant, to_participant, params) do
+    if from_participant.group_id != to_participant.group_id do
+      render(conn, "invalid_transfer_group.json", params: params)
+      raise "Must transfer within the same payment group"
     end
   end
 end

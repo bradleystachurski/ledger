@@ -9,6 +9,7 @@ defmodule LedgerWeb.Router do
     pipe_through :api
     resources "/groups", GroupController, except: [:new, :edit] do
       resources "/participants", ParticipantController, except: [:new, :edit]
+      post "/transfer", ParticipantController, :transfer
     end
   end
 end
