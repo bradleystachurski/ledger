@@ -24,6 +24,14 @@ defmodule LedgerWeb.ParticipantView do
       group_id: participant.group_id}
   end
 
+  def render("delete.json", %{participant: participant}) do
+    %{data: render_one(participant, ParticipantView, "removed_participant.json")}
+  end
+
+  def render("removed_participant.json", %{participant: particpant}) do
+    %{final_amount: particpant.amount}
+  end
+
   def render("non_neg.json", %{params: params}) do
     %{message: "Cannot add a user with a negative amount", params: params}
   end

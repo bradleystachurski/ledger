@@ -52,7 +52,7 @@ defmodule LedgerWeb.ParticipantController do
   def delete(conn, %{"id" => id}) do
     participant = PaymentGroup.get_participant!(id)
     with {:ok, %Participant{}} <- PaymentGroup.delete_participant(participant) do
-      send_resp(conn, :no_content, "")
+      render(conn, "delete.json", participant: participant)
     end
   end
 
