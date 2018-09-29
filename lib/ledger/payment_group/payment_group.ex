@@ -103,16 +103,16 @@ defmodule Ledger.PaymentGroup do
   end
 
   @doc """
-  Returns the list of participants.
+  Returns the list of participants within the payment group.
 
   ## Examples
 
-      iex> list_participants()
+      iex> list_participants(1)
       [%Participant{}, ...]
 
   """
-  def list_participants do
-    Repo.all(Participant)
+  def list_participants(group_id) do
+    Repo.all(from p in Participant, where: p.group_id == ^group_id)
   end
 
   @doc """

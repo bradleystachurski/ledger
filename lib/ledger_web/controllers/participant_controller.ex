@@ -6,8 +6,9 @@ defmodule LedgerWeb.ParticipantController do
 
   action_fallback LedgerWeb.FallbackController
 
-  def index(conn, _params) do
-    participants = PaymentGroup.list_participants()
+  def index(conn, params) do
+    group_id = params["group_id"] |> String.to_integer()
+    participants = PaymentGroup.list_participants(group_id)
     render(conn, "index.json", participants: participants)
   end
 
