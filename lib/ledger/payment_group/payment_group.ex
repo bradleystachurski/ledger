@@ -200,13 +200,27 @@ defmodule Ledger.PaymentGroup do
   Transfers `amount` from one participant to another.
   """
   def transfer(%Participant{} = from_participant, %Participant{} = to_participant, params) do
+    cond do
+      invalid_transfer_amount?(from_participant, params["amount"]) -> {:error, :invalid_amount}
+      invalid_transfer_group?(from_participant, to_participant) -> {:error, :invalid_group}
+      true -> do_transfer(from_participant, to_participant, params["amount"])
+    end
+  end
+
+  defp invalid_transfer_amount?(from_participant, amount), do: from_participant.amount < amount
+
+  defp invalid_transfer_group?(from_particiapnt, to_participant) do
+    from_particiapnt.group_id != to_participant.group_id
+  end
+
+  defp do_transfer(from_participant, to_participant, amount) do
     {:ok, updated_from_participant} =
       from_participant
-      |> update_participant(%{amount: from_participant.amount - params["amount"]})
+      |> update_participant(%{amount: from_participant.amount - amount})
 
     {:ok, updated_to_participant} =
       to_participant
-      |> update_participant(%{amount: to_participant.amount + params["amount"]})
+      |> update_participant(%{amount: to_participant.amount + amount})
 
     {:ok, updated_from_participant, updated_to_participant}
   end

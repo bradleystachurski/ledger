@@ -33,14 +33,14 @@ defmodule LedgerWeb.ParticipantView do
   end
 
   def render("non_neg.json", %{params: params}) do
-    %{message: "Cannot add a user with a negative amount", params: params}
+    %{error: "Cannot add a user with a negative amount", params: params}
   end
 
   def render("invalid_transfer_amount.json", %{params: params}) do
-    %{message: "Cannot transfer an amount greater than current balance", params: params}
+    %{error: "Cannot transfer an amount greater than current balance", params: params}
   end
 
   def render("invalid_transfer_group.json", %{params: params}) do
-    %{message: "Must transfer within the same payment group", params: params}
+    %{error: "Must transfer within the same payment group", params: params}
   end
 end
