@@ -22,6 +22,8 @@ defmodule LedgerWeb.ParticipantController do
         |> put_status(:created)
         |> put_resp_header("location", group_participant_path(conn, :show, params["group_id"], participant))
         |> render("show.json", participant: participant)
+      # Return unmatched case clause and allow FallbackController to handle
+      _ -> PaymentGroup.create_participant(params)
     end
   end
 
@@ -30,10 +32,10 @@ defmodule LedgerWeb.ParticipantController do
     render(conn, "show.json", participant: participant)
   end
 
-  def update(conn, %{"id" => id, "participant" => participant_params}) do
+  def update(conn, %{"id" => id, "update_params" => update_params}) do
     participant = PaymentGroup.get_participant!(id)
 
-    with {:ok, %Participant{} = participant} <- PaymentGroup.update_participant(participant, participant_params) do
+    with {:ok, %Participant{} = participant} <- PaymentGroup.update_participant(participant, update_params) do
       render(conn, "show.json", participant: participant)
     end
   end
@@ -61,6 +63,8 @@ defmodule LedgerWeb.ParticipantController do
         conn
         |> put_status(:forbidden)
         |> render("invalid_transfer_group.json", params: params)
+      # Return unmatched case clause and allow FallbackController to handle
+      _ -> PaymentGroup.transfer(from_participant, to_participant, params)
     end
   end
 end

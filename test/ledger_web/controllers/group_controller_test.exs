@@ -2,7 +2,7 @@ defmodule LedgerWeb.GroupControllerTest do
   use LedgerWeb.ConnCase
 
   alias Ledger.PaymentGroup
-  alias Ledger.PaymentGroup.Group
+  alias Ledger.PaymentGroup.{Group, Participant}
 
   @create_attrs %{name: "some name"}
   @update_attrs %{name: "some updated name"}
@@ -11,6 +11,14 @@ defmodule LedgerWeb.GroupControllerTest do
   def fixture(:group) do
     {:ok, group} = PaymentGroup.create_group(@create_attrs)
     group
+  end
+
+  def fixture(:group_total) do
+    {:ok, %Group{id: group_id}} = PaymentGroup.create_group(@create_attrs)
+    {:ok, first_participant} = PaymentGroup.create_participant(%{name: "alice", amount: 100, group_id: group_id})
+    {:ok, second_participant} = PaymentGroup.create_participant(%{name: "bob", amount: 100, group_id: group_id})
+
+    [first_participant, second_participant]
   end
 
   setup %{conn: conn} do
@@ -72,8 +80,23 @@ defmodule LedgerWeb.GroupControllerTest do
     end
   end
 
+  describe "group total" do
+    setup [:create_group_total]
+
+    test "renders group total when data is valid", %{conn: conn, group_id: group_id, participants: participants} do
+      conn = get conn, group_group_path(conn, :total, group_id)
+      assert json_response(conn, 200)["data"] ==
+        %{"group_total" => Enum.reduce(participants, 0, fn x, acc -> x.amount + acc end)}
+    end
+  end
+
   defp create_group(_) do
     group = fixture(:group)
     {:ok, group: group}
+  end
+
+  defp create_group_total(_) do
+    participants = fixture(:group_total)
+    {:ok, group_id: List.first(participants).group_id, participants: participants}
   end
 end
