@@ -103,6 +103,13 @@ defmodule Ledger.PaymentGroupTest do
       assert {:error, %Ecto.Changeset{}} = PaymentGroup.create_participant(@invalid_attrs)
     end
 
+    test "create_participant/1 with negative amount returns error" do
+      %Group{id: group_id} = group_fixture()
+      assert {:error, :neg_amount} =
+        %{"amount" => -1, "name" => "some name", "group_id" => group_id}
+        |> PaymentGroup.create_participant()
+    end
+
     test "update_participant/2 with valid data updates the participant" do
       {participant, _group_id} = participant_fixture()
       assert {:ok, participant} = PaymentGroup.update_participant(participant, @update_attrs)

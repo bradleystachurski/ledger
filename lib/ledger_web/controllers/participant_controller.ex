@@ -12,20 +12,16 @@ defmodule LedgerWeb.ParticipantController do
   end
 
   def create(conn, params) do
-    check_non_neg_amount(conn, params)
-
-    with {:ok, %Participant{} = participant} <- PaymentGroup.create_participant(params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", group_participant_path(conn, :show, params["group_id"], participant))
-      |> render("show.json", participant: participant)
-    end
-  end
-
-  defp check_non_neg_amount(conn, params) do
-    if params["amount"] < 0 do
-      render(conn, "non_neg.json", params: params)
-      raise "Amount must be non negative"
+    case PaymentGroup.create_participant(params) do
+      {:error, :neg_amount} ->
+        conn
+        |> put_status(:forbidden)
+        |> render("non_neg.json", params: params)
+      {:ok, %Participant{} = participant} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", group_participant_path(conn, :show, params["group_id"], participant))
+        |> render("show.json", participant: participant)
     end
   end
 

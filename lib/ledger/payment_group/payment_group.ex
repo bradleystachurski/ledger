@@ -132,7 +132,7 @@ defmodule Ledger.PaymentGroup do
   def get_participant!(id), do: Repo.get!(Participant, id)
 
   @doc """
-  Creates a participant.
+  Creates a participant if amount is non negative.
 
   ## Examples
 
@@ -144,9 +144,13 @@ defmodule Ledger.PaymentGroup do
 
   """
   def create_participant(attrs \\ %{}) do
-    %Participant{}
-    |> Participant.changeset(attrs)
-    |> Repo.insert()
+    if attrs["amount"] < 0 do
+      {:error, :neg_amount}
+    else
+      %Participant{}
+      |> Participant.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
@@ -197,7 +201,8 @@ defmodule Ledger.PaymentGroup do
   end
 
   @doc """
-  Transfers `amount` from one participant to another.
+  Transfers `amount` from one participant to another, if both participants are in the
+  same group and `from_participant` has enough funds to make the transfer.
   """
   def transfer(%Participant{} = from_participant, %Participant{} = to_participant, params) do
     cond do
