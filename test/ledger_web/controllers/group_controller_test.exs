@@ -2,7 +2,7 @@ defmodule LedgerWeb.GroupControllerTest do
   use LedgerWeb.ConnCase
 
   alias Ledger.PaymentGroup
-  alias Ledger.PaymentGroup.{Group, Participant}
+  alias Ledger.PaymentGroup.Group
 
   @create_attrs %{name: "some name"}
   @update_attrs %{name: "some updated name"}

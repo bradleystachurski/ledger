@@ -202,17 +202,17 @@ defmodule Ledger.PaymentGroup do
 
   @doc """
   Transfers `amount` from one participant to another, if both participants are in the
-  same group and `from_participant` has enough funds to make the transfer.
+  same group and `from_participant` has sufficient funds to transfer.
   """
   def transfer(%Participant{} = from_participant, %Participant{} = to_participant, params) do
     cond do
-      invalid_transfer_amount?(from_participant, params["amount"]) -> {:error, :insufficient_funds}
+      insufficient_funds?(from_participant, params["amount"]) -> {:error, :insufficient_funds}
       invalid_transfer_group?(from_participant, to_participant) -> {:error, :invalid_group}
       true -> do_transfer(from_participant, to_participant, params["amount"])
     end
   end
 
-  defp invalid_transfer_amount?(from_participant, amount), do: from_participant.amount < amount
+  defp insufficient_funds?(from_participant, amount), do: from_participant.amount < amount
 
   defp invalid_transfer_group?(from_particiapnt, to_participant) do
     from_particiapnt.group_id != to_participant.group_id
