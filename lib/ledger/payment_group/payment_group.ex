@@ -206,7 +206,7 @@ defmodule Ledger.PaymentGroup do
   """
   def transfer(%Participant{} = from_participant, %Participant{} = to_participant, params) do
     cond do
-      invalid_transfer_amount?(from_participant, params["amount"]) -> {:error, :invalid_amount}
+      invalid_transfer_amount?(from_participant, params["amount"]) -> {:error, :insufficient_funds}
       invalid_transfer_group?(from_participant, to_participant) -> {:error, :invalid_group}
       true -> do_transfer(from_participant, to_participant, params["amount"])
     end

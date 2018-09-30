@@ -36,8 +36,8 @@ defmodule LedgerWeb.ParticipantView do
     %{error: "Cannot add a user with a negative amount", params: params}
   end
 
-  def render("invalid_transfer_amount.json", %{params: params}) do
-    %{error: "Cannot transfer an amount greater than current balance", params: params}
+  def render("insufficient_funds.json", %{params: params}) do
+    %{error: "The sender doesn't have enough funds to complete the requested transfer", params: params}
   end
 
   def render("invalid_transfer_group.json", %{params: params}) do

@@ -78,6 +78,33 @@ defmodule Ledger.PaymentGroupTest do
       {participant, group_id}
     end
 
+    def transfer_fixture(separate_groups \\ false) do
+      if separate_groups do
+        {:ok, %Group{id: from_group_id}} = PaymentGroup.create_group(%{name: "from_participant_group"})
+        {:ok, %Group{id: to_group_id}} = PaymentGroup.create_group(%{name: "to_participant_group"})
+
+        {:ok, from_participant} =
+          %{group_id: from_group_id, name: "alice", amount: 100}
+          |> PaymentGroup.create_participant()
+        {:ok, to_participant} =
+          %{group_id: to_group_id, name: "bob", amount: 100}
+          |> PaymentGroup.create_participant()
+
+        {from_participant, to_participant}
+      else
+        %Group{id: group_id} = group_fixture()
+
+        {:ok, from_participant} =
+          %{group_id: group_id, name: "alice", amount: 100}
+          |> PaymentGroup.create_participant()
+        {:ok, to_participant} =
+          %{group_id: group_id, name: "bob", amount: 100}
+          |> PaymentGroup.create_participant()
+
+        {from_participant, to_participant}
+      end
+    end
+
     test "list_participants/1 returns all participants" do
       {participant, group_id} = participant_fixture()
       assert PaymentGroup.list_participants(group_id) == [participant]
@@ -133,6 +160,49 @@ defmodule Ledger.PaymentGroupTest do
     test "change_participant/1 returns a participant changeset" do
       {participant, _group_id} = participant_fixture()
       assert %Ecto.Changeset{} = PaymentGroup.change_participant(participant)
+    end
+
+    test "transfer/3 with valid data transfers between two participants" do
+      {from_participant, to_participant} = transfer_fixture()
+      transfer_amount = 50
+
+      assert {:ok, updated_from_participant, updated_to_participant} =
+        PaymentGroup.transfer(from_participant, to_participant, %{"amount" => transfer_amount})
+      assert updated_from_participant.amount == from_participant.amount - transfer_amount
+      assert updated_to_participant.amount == to_participant.amount + transfer_amount
+    end
+
+    test "transfer/3 returns error when from_participant has insufficient funds" do
+      {from_participant, to_participant} = transfer_fixture()
+      transfer_amount = 150
+
+      assert {:error, :insufficient_funds} =
+        PaymentGroup.transfer(from_participant, to_participant, %{"amount" => transfer_amount})
+    end
+
+    test "transfer/3 returns error when participants are in different payment groups" do
+      {from_participant, to_participant} = transfer_fixture(true)
+      transfer_amount = 50
+
+      assert {:error, :invalid_group} =
+        PaymentGroup.transfer(from_participant, to_participant, %{"amount" => transfer_amount})
+    end
+
+    test "total/1 with valid data returns the total amount within payment group" do
+      %Group{id: group_id} = group_fixture()
+      {:ok, first_participant} =
+        %{group_id: group_id, name: "alice", amount: 100}
+        |> PaymentGroup.create_participant()
+      {:ok, second_participant} =
+        %{group_id: group_id, name: "bob", amount: 100}
+        |> PaymentGroup.create_participant()
+      {:ok, third_participant} =
+        %{group_id: group_id, name: "vitalik", amount: 100}
+        |> PaymentGroup.create_participant()
+
+      participants = [first_participant, second_participant, third_participant]
+      assert {:ok, total} = PaymentGroup.group_total(group_id)
+      assert total == Enum.reduce(participants, 0, fn x, acc -> x.amount + acc end)
     end
   end
 end

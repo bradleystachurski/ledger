@@ -53,10 +53,10 @@ defmodule LedgerWeb.ParticipantController do
       {:ok, %Participant{} = from_participant, %Participant{} = to_participant} ->
         conn
         |> render("show_transfer.json", from_participant: from_participant, to_participant: to_participant)
-      {:error, :invalid_amount} ->
+      {:error, :insufficient_funds} ->
         conn
         |> put_status(:forbidden)
-        |> render("invalid_transfer_amount.json", params: params)
+        |> render("insufficient_funds.json", params: params)
       {:error, :invalid_group} ->
         conn
         |> put_status(:forbidden)
