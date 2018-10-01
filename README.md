@@ -24,17 +24,23 @@ To start a local server:
   - Start the server with `mix phx.server`
     - The default port is `4000`. To start the server on a different port, use `PORT=<port_number> mix phx.server`
 
-You're now running a Phoenix server locally! You can begin using the API with the url `http://localhost:4000/api/gorups` (or using whatever port used for startup).
+You're now running a Phoenix server locally! You can begin using the API with the url `http://localhost:4000/api/groups` (or using whatever port used for startup).
 
 ## Testing
 
-Run the test suite with `mix test`.
+Run the test suite with
+  
+  `mix test`
 
 ### Seeding the database
 
-Test data can be created by running `mix run priv/repo/seeds.exs`
+Test data can be created by running
+  
+  `mix run priv/repo/seeds.exs`
 
-To reset the database and reseed, run `mix ecto.reset`
+To reset the database and reseed, run
+
+  `mix ecto.reset`
 
 ## Health Check
 
