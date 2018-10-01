@@ -12,5 +12,6 @@ defmodule LedgerWeb.Router do
       post "/transfer", ParticipantController, :transfer
       get "/total", GroupController, :total
     end
+    get "/health", HealthController, :health
   end
 end
