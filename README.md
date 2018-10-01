@@ -4,7 +4,7 @@ Ledger is a Phoenix application written in Elixir that offloads transactions fro
 
 ## Dependencies
 
-  - Elixir ~> 1.7.2
+  - Elixir ~> 1.7.3
   - PostgresSQL
 
 ## Installation
