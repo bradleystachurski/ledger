@@ -4,9 +4,9 @@ defmodule LedgerWeb.ParticipantControllerTest do
   alias Ledger.PaymentGroup
   alias Ledger.PaymentGroup.{Group, Participant}
 
-  @create_attrs %{name: "some name", amount: 100}
-  @update_attrs %{name: "some updated name", amount: 101}
-  @invalid_attrs %{name: nil, amount: nil}
+  @create_attrs %{username: "some username", amount: 100}
+  @update_attrs %{username: "some updated username", amount: 101}
+  @invalid_attrs %{username: nil, amount: nil}
 
   def fixture(:group) do
     {:ok, group} = PaymentGroup.create_group(%{name: "some name"})
@@ -15,14 +15,14 @@ defmodule LedgerWeb.ParticipantControllerTest do
 
   def fixture(:participant) do
     %Group{id: group_id} = fixture(:group)
-    {:ok, participant} = PaymentGroup.create_participant(%{name: "some name", amount: 100, group_id: group_id})
+    {:ok, participant} = PaymentGroup.create_participant(%{username: "some username", amount: 100, group_id: group_id})
     participant
   end
 
   def fixture(:transfer_participants) do
     %Group{id: group_id} = fixture(:group)
-    {:ok, from_participant} = PaymentGroup.create_participant(%{name: "alice", amount: 100, group_id: group_id})
-    {:ok, to_participant} = PaymentGroup.create_participant(%{name: "bob", amount: 100, group_id: group_id})
+    {:ok, from_participant} = PaymentGroup.create_participant(%{username: "alice", amount: 100, group_id: group_id})
+    {:ok, to_participant} = PaymentGroup.create_participant(%{username: "bob", amount: 100, group_id: group_id})
     {from_participant, to_participant}
   end
 
@@ -51,7 +51,7 @@ defmodule LedgerWeb.ParticipantControllerTest do
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
         "amount" => 100,
-        "name" => "some name",
+        "username" => "some username",
         "group_id" => group_id}
     end
 
@@ -73,7 +73,7 @@ defmodule LedgerWeb.ParticipantControllerTest do
       assert json_response(conn, 200)["data"] == %{
         "id" => id,
         "amount" => 101,
-        "name" => "some updated name",
+        "username" => "some updated username",
         "group_id" => participant.group_id}
     end
 

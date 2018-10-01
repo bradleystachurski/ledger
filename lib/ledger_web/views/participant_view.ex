@@ -19,7 +19,7 @@ defmodule LedgerWeb.ParticipantView do
 
   def render("participant.json", %{participant: participant}) do
     %{id: participant.id,
-      name: participant.name,
+      username: participant.username,
       amount: participant.amount,
       group_id: participant.group_id}
   end

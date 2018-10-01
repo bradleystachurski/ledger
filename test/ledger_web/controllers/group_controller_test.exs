@@ -15,8 +15,8 @@ defmodule LedgerWeb.GroupControllerTest do
 
   def fixture(:group_total) do
     {:ok, %Group{id: group_id}} = PaymentGroup.create_group(@create_attrs)
-    {:ok, first_participant} = PaymentGroup.create_participant(%{name: "alice", amount: 100, group_id: group_id})
-    {:ok, second_participant} = PaymentGroup.create_participant(%{name: "bob", amount: 100, group_id: group_id})
+    {:ok, first_participant} = PaymentGroup.create_participant(%{username: "alice", amount: 100, group_id: group_id})
+    {:ok, second_participant} = PaymentGroup.create_participant(%{username: "bob", amount: 100, group_id: group_id})
 
     [first_participant, second_participant]
   end

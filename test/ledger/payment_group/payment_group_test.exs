@@ -63,9 +63,9 @@ defmodule Ledger.PaymentGroupTest do
   end
 
   describe "participants" do
-    @valid_attrs %{amount: 42, name: "some name"}
-    @update_attrs %{amount: 43, name: "some updated name"}
-    @invalid_attrs %{group_id: nil, amount: nil, name: nil}
+    @valid_attrs %{amount: 42, username: "some username"}
+    @update_attrs %{amount: 43, username: "some updated username"}
+    @invalid_attrs %{group_id: nil, amount: nil, username: nil}
 
     def participant_fixture(attrs \\ %{}) do
       %Group{id: group_id} = group_fixture()
@@ -84,10 +84,10 @@ defmodule Ledger.PaymentGroupTest do
         {:ok, %Group{id: to_group_id}} = PaymentGroup.create_group(%{name: "to_participant_group"})
 
         {:ok, from_participant} =
-          %{group_id: from_group_id, name: "alice", amount: 100}
+          %{group_id: from_group_id, username: "alice", amount: 100}
           |> PaymentGroup.create_participant()
         {:ok, to_participant} =
-          %{group_id: to_group_id, name: "bob", amount: 100}
+          %{group_id: to_group_id, username: "bob", amount: 100}
           |> PaymentGroup.create_participant()
 
         {from_participant, to_participant}
@@ -95,10 +95,10 @@ defmodule Ledger.PaymentGroupTest do
         %Group{id: group_id} = group_fixture()
 
         {:ok, from_participant} =
-          %{group_id: group_id, name: "alice", amount: 100}
+          %{group_id: group_id, username: "alice", amount: 100}
           |> PaymentGroup.create_participant()
         {:ok, to_participant} =
-          %{group_id: group_id, name: "bob", amount: 100}
+          %{group_id: group_id, username: "bob", amount: 100}
           |> PaymentGroup.create_participant()
 
         {from_participant, to_participant}
@@ -123,7 +123,7 @@ defmodule Ledger.PaymentGroupTest do
         |> PaymentGroup.create_participant()
 
       assert participant.amount == 42
-      assert participant.name == "some name"
+      assert participant.username == "some username"
     end
 
     test "create_participant/1 with invalid data returns error changeset" do
@@ -133,7 +133,7 @@ defmodule Ledger.PaymentGroupTest do
     test "create_participant/1 with negative amount returns error" do
       %Group{id: group_id} = group_fixture()
       assert {:error, :neg_amount} =
-        %{"amount" => -1, "name" => "some name", "group_id" => group_id}
+        %{"amount" => -1, "username" => "some username", "group_id" => group_id}
         |> PaymentGroup.create_participant()
     end
 
@@ -142,7 +142,7 @@ defmodule Ledger.PaymentGroupTest do
       assert {:ok, participant} = PaymentGroup.update_participant(participant, @update_attrs)
       assert %Participant{} = participant
       assert participant.amount == 43
-      assert participant.name == "some updated name"
+      assert participant.username == "some updated username"
     end
 
     test "update_participant/2 with invalid data returns error changeset" do
@@ -191,13 +191,13 @@ defmodule Ledger.PaymentGroupTest do
     test "total/1 with valid data returns the total amount within payment group" do
       %Group{id: group_id} = group_fixture()
       {:ok, first_participant} =
-        %{group_id: group_id, name: "alice", amount: 100}
+        %{group_id: group_id, username: "alice", amount: 100}
         |> PaymentGroup.create_participant()
       {:ok, second_participant} =
-        %{group_id: group_id, name: "bob", amount: 100}
+        %{group_id: group_id, username: "bob", amount: 100}
         |> PaymentGroup.create_participant()
       {:ok, third_participant} =
-        %{group_id: group_id, name: "vitalik", amount: 100}
+        %{group_id: group_id, username: "vitalik", amount: 100}
         |> PaymentGroup.create_participant()
 
       participants = [first_participant, second_participant, third_participant]

@@ -3,7 +3,7 @@ defmodule Ledger.Repo.Migrations.CreateParticipants do
 
   def change do
     create table(:participants) do
-      add :name, :string
+      add :username, :string
       add :amount, :integer
       add :group_id, references(:groups, on_delete: :nothing)
 

@@ -5,7 +5,7 @@ defmodule Ledger.PaymentGroup.Participant do
 
   schema "participants" do
     field :amount, :integer
-    field :name, :string
+    field :username, :string
     field :group_id, :id
 
     timestamps()
@@ -14,7 +14,7 @@ defmodule Ledger.PaymentGroup.Participant do
   @doc false
   def changeset(participant, attrs) do
     participant
-    |> cast(attrs, [:name, :amount, :group_id])
-    |> validate_required([:name, :amount, :group_id])
+    |> cast(attrs, [:username, :amount, :group_id])
+    |> validate_required([:username, :amount, :group_id])
   end
 end
